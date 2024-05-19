@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Hi I amthe page on which the data will be shown below:</h1>
+</body>
+
+</html>
+<script>
+    const url = "https://docs.google.com/spreadsheets/d/";
+    const ssid = "1RVjFo8MkiNNcT5--bE6gf3meTDEfvo-oy5bszhRrY2I";
+    const query1 = "/gviz/tq?tqx=out:json";
+    const endpointAPI = `${url}${ssid}${query1}`;
+    console.log("API: ", endpointAPI);
+
+    fetch(endpointAPI)
+        .then(res => res.text())
+        .then(text => {
+            const json = JSON.parse(text.substring(47).slice(0, -2));
+            console.log(json.table.rows);
+
+
+            const rows = json.table.rows;
+
+            const emailData = {};
+
+
+            rows.forEach((row) => {
+                const dataAttribute1 = row.c[1].v;
+                const dataAttribute2 = row.c[2].v;
+
+                if (!emailData[dataAttribute1]) {
+                    emailData[dataAttribute1] = [];
+                }
+
+                if (!emailData[dataAttribute1].includes(dataAttribute2)) {
+                    emailData[dataAttribute1].push(dataAttribute2);
+                }
+            });
+
+            const jsonString = JSON.stringify(emailData, null, 2);
+            console.log(jsonString);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+</script>
